@@ -21,7 +21,7 @@ if (localPropertiesFile.exists()) {
     localProperties.load(FileInputStream(localPropertiesFile))
 }
 
-val apiKey: String = localProperties.getProperty("API_KEY") ?: ""
+
 
 
 android {
@@ -36,7 +36,8 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "API_KEY", "\"${apiKey}\"")
+        buildConfigField("String", "API_KEY", "\"${property("API_KEY")}\"")
+
 
     }
 

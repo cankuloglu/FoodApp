@@ -1,7 +1,7 @@
-package com.example.foodapp.domain
+package com.example.foodapp.domain.usecase
 
-import com.example.foodapp.Recipe
-import com.example.foodapp.RecipeRepository
+import com.example.foodapp.domain.model.Recipe
+import com.example.foodapp.domain.repository.RecipeRepository
 import javax.inject.Inject
 
 class GetRandomRecipesUseCase @Inject constructor(

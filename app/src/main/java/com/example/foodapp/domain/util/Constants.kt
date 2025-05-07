@@ -1,4 +1,4 @@
-package com.example.foodapp
+package com.example.foodapp.domain.util
 
 import com.cankuloglu.myapplication.BuildConfig
 

@@ -6,16 +6,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodapp.Recipe
-import com.example.foodapp.domain.GetRandomRecipesUseCase
+import com.example.foodapp.domain.model.Recipe
+import com.example.foodapp.domain.usecase.GetRandomRecipesUseCase
+import com.example.foodapp.domain.usecase.SearchRecipesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getRandomRecipesUseCase: GetRandomRecipesUseCase
+    private val getRandomRecipesUseCase: GetRandomRecipesUseCase,
+    private val searchRecipesUseCase: SearchRecipesUseCase
 ) : ViewModel() {
+
+    var searchRecipesList by mutableStateOf<List<Recipe>>(emptyList())
+        private set
 
     var randomRecipesList by mutableStateOf<List<Recipe>>(emptyList())
         private set
@@ -44,7 +49,22 @@ class HomeViewModel @Inject constructor(
                 isLoading = false
             }
         }
+    }
 
+    fun searchRecipes(query: String){
+        isLoading = true
+        viewModelScope.launch {
+            try {
+                searchRecipesList = searchRecipesUseCase.execute(query)
+                Log.d("HomeViewModel","Search results for '$query': $searchRecipesList")
+                errorMessage = null
+            } catch (e: Exception) {
+                errorMessage = "Search Failed"
+                Log.e("HomeViewModel", "Search error", e)
+            } finally {
+                isLoading = false
+            }
 
+        }
     }
 }

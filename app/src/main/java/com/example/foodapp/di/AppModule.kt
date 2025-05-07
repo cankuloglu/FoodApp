@@ -1,8 +1,8 @@
 package com.example.foodapp.di
-import com.cankuloglu.myapplication.BuildConfig
-import com.example.foodapp.Constants
-import com.example.foodapp.RecipeRepository
-import com.example.foodapp.data.SpoonacularApiService
+import com.example.foodapp.domain.util.Constants
+import com.example.foodapp.data.repository.RecipeRepositoryImpl
+import com.example.foodapp.data.remote.SpoonacularApiService
+import com.example.foodapp.domain.repository.RecipeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,6 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+// data/di/AppModule.kt
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -40,8 +41,6 @@ object AppModule {
         api: SpoonacularApiService,
         apiKey: String
     ): RecipeRepository {
-        return RecipeRepository(api, apiKey)
+        return RecipeRepositoryImpl(api, apiKey)
     }
-
-
 }

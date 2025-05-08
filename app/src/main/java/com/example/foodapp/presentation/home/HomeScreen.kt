@@ -1,5 +1,6 @@
 package com.example.foodapp.presentation.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,7 @@ import coil.compose.AsyncImage
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    onRecipeClick: (Int) -> Unit
 ) {
 
     val isLoading = viewModel.isLoading
@@ -172,6 +174,7 @@ fun HomeScreen(
                                     .padding(8.dp)
                                     .fillMaxWidth()
                                     .shadow(4.dp, shape = MaterialTheme.shapes.medium, clip = true)
+                                    .clickable { onRecipeClick(recipe.id) }
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,

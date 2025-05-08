@@ -3,6 +3,7 @@ package com.example.foodapp.data.repository
 import com.example.foodapp.data.remote.SpoonacularApiService
 import com.example.foodapp.data.dto.toDomain
 import com.example.foodapp.domain.model.Recipe
+import com.example.foodapp.domain.model.RecipeDetail
 import com.example.foodapp.domain.repository.RecipeRepository
 import javax.inject.Inject
 
@@ -22,6 +23,11 @@ class RecipeRepositoryImpl@Inject constructor(
         } catch (e: Exception) {
             emptyList()
         }
+    }
+
+    override suspend fun getRecipeDetail(id: Int): RecipeDetail {
+        val responseDto = api.getRecipeInformation(id,apiKey,false)
+        return responseDto.toDomain()
     }
 
 }

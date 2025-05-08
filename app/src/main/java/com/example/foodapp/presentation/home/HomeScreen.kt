@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -106,8 +107,6 @@ fun HomeScreen(
                     )
                 )
             }
-
-
             if (isLoading) {
                 Box(
                     modifier = Modifier
@@ -129,49 +128,74 @@ fun HomeScreen(
                     )
                 }
 
+                val currentRecipes = if (searchQuery.isEmpty()) {
+                    viewModel.randomRecipesList
+                } else {
+                    viewModel.searchRecipesList
+                }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                ) {
-                    val currentRecipes = if (searchQuery.isEmpty()) {
-                        viewModel.randomRecipesList
-                    } else {
-                        viewModel.searchRecipesList
-                    }
-
-                    items(currentRecipes){ recipe ->
-                        Card(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth()
-                                .shadow(4.dp, shape = MaterialTheme.shapes.medium, clip = true)
+                if (errorMessage == null && currentRecipes.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.width(400.dp)
+                            Icon(
+                                imageVector = Icons.Default.ErrorOutline,
+                                contentDescription = "No results",
+                                tint = Color.Gray,
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "No recipes found.",
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    color = Color.Gray,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            )
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f)
+                    ) {
+                        items(currentRecipes) { recipe ->
+                            Card(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth()
+                                    .shadow(4.dp, shape = MaterialTheme.shapes.medium, clip = true)
                             ) {
-                                AsyncImage(
-                                    model = recipe.image,
-                                    contentDescription = recipe.title,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.size(80.dp)
-                                )
-                                Text(
-                                    text = recipe.title,
-                                    modifier = Modifier
-                                        .padding(horizontal = 16.dp)
-                                        .weight(1f),
-                                    fontWeight = FontWeight.Bold
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.width(400.dp)
+                                ) {
+                                    AsyncImage(
+                                        model = recipe.image,
+                                        contentDescription = recipe.title,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.size(80.dp)
+                                    )
+                                    Text(
+                                        text = recipe.title,
+                                        modifier = Modifier
+                                            .padding(horizontal = 16.dp)
+                                            .weight(1f),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
         }
-
-
     }
 }

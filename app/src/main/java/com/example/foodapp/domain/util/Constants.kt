@@ -5,4 +5,5 @@ import com.cankuloglu.myapplication.BuildConfig
 object Constants {
     const val BASE_URL = "https://api.spoonacular.com/"
     const val API_KEY = BuildConfig.API_KEY
+    const val RANDOM_RECIPE_QUANTITY = 10
     }

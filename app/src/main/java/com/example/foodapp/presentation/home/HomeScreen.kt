@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.foodapp.presentation.uistate.HomeUiState
 
 @Composable
 fun HomeScreen(
@@ -49,11 +51,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onRecipeClick: (Int) -> Unit
 ) {
-
-    val isLoading = viewModel.isLoading
-    val errorMessage = viewModel.errorMessage
-
     var searchQuery by remember { mutableStateOf("") }
+
+    val uiState by viewModel.homeUiState.collectAsState()
 
     Column(
         modifier = modifier
@@ -61,14 +61,13 @@ fun HomeScreen(
             .padding(16.dp)
     ) {
         OutlinedTextField(
-            value = searchQuery ,
+            value = searchQuery,
             onValueChange = {
                 searchQuery = it
                 viewModel.searchRecipes(it)
             },
             label = { Text("Search Food...") },
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { viewModel.searchRecipes(searchQuery) }) {
@@ -87,7 +86,7 @@ fun HomeScreen(
                 .padding(top = 8.dp)
                 .shadow(4.dp, shape = MaterialTheme.shapes.medium, clip = true),
             colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9))
-        ){
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -109,42 +108,38 @@ fun HomeScreen(
                     )
                 )
             }
-            if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
-            } else {
-                errorMessage?.let {
-                    Text(
-                        text = it,
-                        color = Color.Red,
-                        modifier = Modifier.fillMaxWidth(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center
-                    )
-                }
 
-                val currentRecipes = if (searchQuery.isEmpty()) {
-                    viewModel.randomRecipesList
-                } else {
-                    viewModel.searchRecipesList
-                }
-
-                if (errorMessage == null && currentRecipes.isEmpty()) {
+            when (uiState) {
+                is HomeUiState.Loading -> {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
+                        CircularProgressIndicator(modifier = Modifier.size(48.dp))
+                    }
+                }
+
+                is HomeUiState.Error -> {
+                    val message = (uiState as HomeUiState.Error).message
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = message,
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                is HomeUiState.Empty -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(
                                 imageVector = Icons.Default.ErrorOutline,
                                 contentDescription = "No results",
@@ -162,13 +157,16 @@ fun HomeScreen(
                             )
                         }
                     }
-                } else {
+                }
+
+                is HomeUiState.Success -> {
+                    val recipes = (uiState as HomeUiState.Success).recipes
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
                             .weight(1f)
                     ) {
-                        items(currentRecipes) { recipe ->
+                        items(recipes) { recipe ->
                             Card(
                                 modifier = Modifier
                                     .padding(8.dp)

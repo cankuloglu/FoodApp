@@ -1,43 +1,31 @@
 package com.example.foodapp.presentation.detail
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodapp.domain.model.RecipeDetail
 import com.example.foodapp.domain.usecase.GetRecipeInformationUseCase
+import com.example.foodapp.domain.util.ResponseState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    val getRecipeInformationUseCase: GetRecipeInformationUseCase
+     private val getRecipeInformationUseCase: GetRecipeInformationUseCase
 ): ViewModel() {
 
-    var recipeDetail by mutableStateOf<RecipeDetail?>(null)
-        private set
-
-    var isLoading by mutableStateOf(false)
-        private set
-
-    var errorMessage by mutableStateOf<String?>(null)
-        private set
+    private val _recipeDetailState = MutableStateFlow<ResponseState<RecipeDetail>>(ResponseState.Loading())
+    val recipeDetailState: StateFlow<ResponseState<RecipeDetail>> = _recipeDetailState.asStateFlow()
 
     fun loadRecipeDetail(id: Int) {
-        isLoading = true
         viewModelScope.launch {
-            try {
-                recipeDetail = getRecipeInformationUseCase.execute(id)
-                Log.d("DetailViewModel","Recipe Detail: $recipeDetail")
-                errorMessage = null
-            } catch (e: Exception) {
-                errorMessage = "Failed to load recipe detail"
-            } finally {
-                isLoading = false
-            }
+            getRecipeInformationUseCase.execute(id)
+                .collect { state ->
+                    _recipeDetailState.value = state
+                }
         }
     }
 }

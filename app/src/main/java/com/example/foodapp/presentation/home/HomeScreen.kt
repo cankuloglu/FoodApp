@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.foodapp.presentation.uistate.HomeUiState
+import com.example.foodapp.domain.util.ResponseState
 
 @Composable
 fun HomeScreen(
@@ -53,7 +53,7 @@ fun HomeScreen(
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
-    val uiState by viewModel.homeUiState.collectAsState()
+    val uiState by viewModel.recipesState.collectAsState()
 
     Column(
         modifier = modifier
@@ -110,7 +110,7 @@ fun HomeScreen(
             }
 
             when (uiState) {
-                is HomeUiState.Loading -> {
+                is ResponseState.Loading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -119,8 +119,8 @@ fun HomeScreen(
                     }
                 }
 
-                is HomeUiState.Error -> {
-                    val message = (uiState as HomeUiState.Error).message
+                is ResponseState.Error -> {
+                    val message = (uiState as ResponseState.Error).message
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -134,63 +134,63 @@ fun HomeScreen(
                     }
                 }
 
-                is HomeUiState.Empty -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.ErrorOutline,
-                                contentDescription = "No results",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(48.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "No recipes found.",
-                                style = MaterialTheme.typography.bodyLarge.copy(
-                                    color = Color.Gray,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Medium
+                is ResponseState.Success -> {
+                    val recipes = (uiState as ResponseState.Success).data
+                    if (recipes.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = Icons.Default.ErrorOutline,
+                                    contentDescription = "No results",
+                                    tint = Color.Gray,
+                                    modifier = Modifier.size(48.dp)
                                 )
-                            )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "No recipes found.",
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        color = Color.Gray,
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
+                            }
                         }
-                    }
-                }
-
-                is HomeUiState.Success -> {
-                    val recipes = (uiState as HomeUiState.Success).recipes
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f)
-                    ) {
-                        items(recipes) { recipe ->
-                            Card(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .fillMaxWidth()
-                                    .shadow(4.dp, shape = MaterialTheme.shapes.medium, clip = true)
-                                    .clickable { onRecipeClick(recipe.id) }
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.width(400.dp)
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .weight(1f)
+                        ) {
+                            items(recipes) { recipe ->
+                                Card(
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .fillMaxWidth()
+                                        .shadow(4.dp, shape = MaterialTheme.shapes.medium, clip = true)
+                                        .clickable { onRecipeClick(recipe.id) }
                                 ) {
-                                    AsyncImage(
-                                        model = recipe.image,
-                                        contentDescription = recipe.title,
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.size(80.dp)
-                                    )
-                                    Text(
-                                        text = recipe.title,
-                                        modifier = Modifier
-                                            .padding(horizontal = 16.dp)
-                                            .weight(1f),
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.width(400.dp)
+                                    ) {
+                                        AsyncImage(
+                                            model = recipe.image,
+                                            contentDescription = recipe.title,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.size(80.dp)
+                                        )
+                                        Text(
+                                            text = recipe.title,
+                                            modifier = Modifier
+                                                .padding(horizontal = 16.dp)
+                                                .weight(1f),
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                             }
                         }

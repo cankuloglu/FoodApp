@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FoodApp</string>
+    <string name="search_bar_text">"Search Food…"</string>
+    <string name="search_results_text">Search Results></string>
+    <string name="random_recipes_text">Random Recipes</string>
+    <string name="no_recipes_found">No recipes found.</string>
 </resources>

@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.cankuloglu.myapplication.R
 import com.example.foodapp.domain.util.ResponseState
 
 @Composable
@@ -66,12 +68,12 @@ fun HomeScreen(
                 searchQuery = it
                 viewModel.searchRecipes(it)
             },
-            label = { Text("Search Food...") },
+            label = { Text(text = stringResource(R.string.search_bar_text))},
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { viewModel.searchRecipes(searchQuery) }) {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                    Icon(imageVector = Icons.Default.Search, contentDescription = null)
                 }
             },
             shape = MaterialTheme.shapes.medium,
@@ -101,7 +103,8 @@ fun HomeScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = if (searchQuery.isNotEmpty()) "Search Results" else "Random Recipes",
+                    text = if (searchQuery.isNotEmpty()) stringResource(R.string.search_results_text)
+                    else stringResource(R.string.random_recipes_text),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
@@ -144,13 +147,13 @@ fun HomeScreen(
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
                                     imageVector = Icons.Default.ErrorOutline,
-                                    contentDescription = "No results",
+                                    contentDescription = null,
                                     tint = Color.Gray,
                                     modifier = Modifier.size(48.dp)
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "No recipes found.",
+                                    text = stringResource(R.string.no_recipes_found),
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = Color.Gray,
                                         fontSize = 18.sp,

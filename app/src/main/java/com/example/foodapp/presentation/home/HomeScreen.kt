@@ -1,6 +1,7 @@
 package com.example.foodapp.presentation.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -56,6 +58,7 @@ fun HomeScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     val uiState by viewModel.recipesState.collectAsState()
+
 
     Column(
         modifier = modifier
@@ -151,7 +154,9 @@ fun HomeScreen(
                                     tint = Color.Gray,
                                     modifier = Modifier.size(48.dp)
                                 )
+
                                 Spacer(modifier = Modifier.height(8.dp))
+
                                 Text(
                                     text = stringResource(R.string.no_recipes_found),
                                     style = MaterialTheme.typography.bodyLarge.copy(
@@ -178,20 +183,34 @@ fun HomeScreen(
                                 ) {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.width(400.dp)
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
                                     ) {
                                         AsyncImage(
                                             model = recipe.image,
-                                            contentDescription = recipe.title,
+                                            contentDescription = recipe.image,
                                             contentScale = ContentScale.Crop,
                                             modifier = Modifier.size(80.dp)
                                         )
+
+                                        Spacer(modifier = Modifier.width(16.dp))
+
                                         Text(
                                             text = recipe.title,
-                                            modifier = Modifier
-                                                .padding(horizontal = 16.dp)
-                                                .weight(1f),
-                                            fontWeight = FontWeight.Bold
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.weight(1f)
+                                        )
+
+
+                                        Spacer(modifier = Modifier.width(16.dp))
+
+                                        Icon(
+                                            imageVector = Icons.Default.FavoriteBorder,
+                                            contentDescription = null,
+                                            tint = Color.Red,
+                                            modifier = Modifier.size(25.dp)
                                         )
                                     }
                                 }

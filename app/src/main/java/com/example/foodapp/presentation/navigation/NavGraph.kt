@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.foodapp.presentation.detail.DetailScreen
+import com.example.foodapp.presentation.favorites.FavoritesScreen
 import com.example.foodapp.presentation.home.HomeScreen
 
 @Composable
@@ -31,6 +32,10 @@ fun NavGraph(
             recipeId?.let {
                 DetailScreen(recipeId = it, modifier = modifier)
             }
+        }
+
+        composable("favorites"){
+            FavoritesScreen()
         }
     }
 }

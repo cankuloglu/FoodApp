@@ -42,20 +42,20 @@ fun DetailScreen(
         viewModel.loadRecipeDetail(recipeId)
     }
 
-    val DetailUiState by viewModel.recipeDetailState.collectAsState()
+    val detailUiState by viewModel.recipeDetailState.collectAsState()
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        when(DetailUiState){
+        when(detailUiState){
             is ResponseState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
 
             is ResponseState.Error -> {
-                val errorMessage = (DetailUiState as ResponseState.Error).message
+                val errorMessage = (detailUiState as ResponseState.Error).message
                 Text(
                     text = errorMessage,
                     color = Color.Red,
@@ -65,7 +65,7 @@ fun DetailScreen(
 
             }
             is ResponseState.Success -> {
-                val recipeDetail = (DetailUiState as ResponseState.Success).data
+                val recipeDetail = (detailUiState as ResponseState.Success).data
 
                 Card(
                     modifier = Modifier

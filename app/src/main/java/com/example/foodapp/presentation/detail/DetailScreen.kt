@@ -27,9 +27,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.example.foodapp.domain.util.HtmlUtils
 import com.example.foodapp.domain.util.ResponseState
 
 @Composable
@@ -42,20 +42,20 @@ fun DetailScreen(
         viewModel.loadRecipeDetail(recipeId)
     }
 
-    val uiState by viewModel.recipeDetailState.collectAsState()
+    val DetailUiState by viewModel.recipeDetailState.collectAsState()
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        when(uiState){
+        when(DetailUiState){
             is ResponseState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
 
             is ResponseState.Error -> {
-                val errorMessage = (uiState as ResponseState.Error).message
+                val errorMessage = (DetailUiState as ResponseState.Error).message
                 Text(
                     text = errorMessage,
                     color = Color.Red,
@@ -65,7 +65,7 @@ fun DetailScreen(
 
             }
             is ResponseState.Success -> {
-                val recipeDetail = (uiState as ResponseState.Success).data
+                val recipeDetail = (DetailUiState as ResponseState.Success).data
 
                 Card(
                     modifier = Modifier
@@ -133,7 +133,7 @@ fun DetailScreen(
                                 )
 
                                 Text(
-                                    text = HtmlCompat.fromHtml(recipeDetail.summary, HtmlCompat.FROM_HTML_MODE_LEGACY).toString(),
+                                    text = HtmlUtils.fromHtmlToString(recipeDetail.summary),
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.padding(bottom = 4.dp)
                                 )

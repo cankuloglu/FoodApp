@@ -2,6 +2,7 @@ package com.example.foodapp.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.foodapp.domain.usecase.AddFavoriteRecipeUseCase
 import com.example.foodapp.domain.model.Recipe
 import com.example.foodapp.domain.usecase.GetRandomRecipesUseCase
 import com.example.foodapp.domain.usecase.SearchRecipesUseCase
@@ -16,11 +17,13 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getRandomRecipesUseCase: GetRandomRecipesUseCase,
-    private val searchRecipesUseCase: SearchRecipesUseCase
+    private val searchRecipesUseCase: SearchRecipesUseCase,
+    private val addFavoriteRecipeUseCase: AddFavoriteRecipeUseCase,
 ) : ViewModel() {
 
     private val _recipesState = MutableStateFlow<ResponseState<List<Recipe>>>(ResponseState.Loading())
     val recipesState: StateFlow<ResponseState<List<Recipe>>> = _recipesState.asStateFlow()
+
 
     init {
         loadRandomRecipes()
@@ -41,6 +44,12 @@ class HomeViewModel @Inject constructor(
                 .collect { state ->
                     _recipesState.value = state
                 }
+        }
+    }
+
+    fun addRecipeToFavorites(recipe: Recipe) {
+        viewModelScope.launch {
+            addFavoriteRecipeUseCase(recipe)
         }
     }
 }

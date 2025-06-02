@@ -1,4 +1,8 @@
 package com.example.foodapp.di
+import android.content.Context
+import androidx.room.Room
+import com.example.foodapp.RecipeDao
+import com.example.foodapp.data.RecipeDatabase
 import com.example.foodapp.domain.util.Constants
 import com.example.foodapp.data.repository.RecipeRepositoryImpl
 import com.example.foodapp.data.remote.SpoonacularApiService
@@ -6,6 +10,7 @@ import com.example.foodapp.domain.repository.RecipeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -36,10 +41,29 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): RecipeDatabase =
+        Room.databaseBuilder(
+            context,
+            RecipeDatabase::class.java,
+            "recipe_database"
+        ).build()
+
+    @Provides
+    fun provideRecipeDao(database: RecipeDatabase): RecipeDao = database.recipeDao()
+
+    @Provides
+    @Singleton
     fun provideRecipeRepository(
         api: SpoonacularApiService,
-        apiKey: String
+        apiKey: String,
+        recipeDao: RecipeDao
     ): RecipeRepository {
-        return RecipeRepositoryImpl(api, apiKey)
+        return RecipeRepositoryImpl(api, apiKey, recipeDao)
     }
+
+
 }
+
+
+
+

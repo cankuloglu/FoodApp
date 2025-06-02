@@ -105,4 +105,7 @@ dependencies {
 
     implementation(libs.androidx.material.icons.extended)
 
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
+
 }

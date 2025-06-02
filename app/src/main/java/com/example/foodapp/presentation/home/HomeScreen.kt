@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Search
@@ -48,17 +49,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.cankuloglu.myapplication.R
 import com.example.foodapp.domain.util.ResponseState
+import com.example.foodapp.presentation.favorites.FavoritesViewModel
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    favoritesViewModel: FavoritesViewModel = hiltViewModel(),
     onRecipeClick: (Int) -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
-    val uiState by viewModel.recipesState.collectAsState()
+    val uiState by homeViewModel.recipesState.collectAsState()
 
+    val favorites by favoritesViewModel.favoriteRecipes.collectAsState()
 
     Column(
         modifier = modifier
@@ -69,13 +73,13 @@ fun HomeScreen(
             value = searchQuery,
             onValueChange = {
                 searchQuery = it
-                viewModel.searchRecipes(it)
+                homeViewModel.searchRecipes(it)
             },
             label = { Text(text = stringResource(R.string.search_bar_text))},
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             trailingIcon = {
-                IconButton(onClick = { viewModel.searchRecipes(searchQuery) }) {
+                IconButton(onClick = { homeViewModel.searchRecipes(searchQuery) }) {
                     Icon(imageVector = Icons.Default.Search, contentDescription = null)
                 }
             },
@@ -174,6 +178,9 @@ fun HomeScreen(
                                 .weight(1f)
                         ) {
                             items(recipes) { recipe ->
+
+                                val isFavorite = favorites.any { it.id == recipe.id }
+
                                 Card(
                                     modifier = Modifier
                                         .padding(8.dp)
@@ -207,10 +214,18 @@ fun HomeScreen(
                                         Spacer(modifier = Modifier.width(16.dp))
 
                                         Icon(
-                                            imageVector = Icons.Default.FavoriteBorder,
+                                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                             contentDescription = null,
                                             tint = Color.Red,
-                                            modifier = Modifier.size(25.dp)
+                                            modifier = Modifier
+                                                .size(25.dp)
+                                                .clickable {
+                                                    if (isFavorite) {
+                                                        favoritesViewModel.removeFavoriteRecipe(recipe)
+                                                    }else{
+                                                        homeViewModel.addRecipeToFavorites(recipe)
+                                                        }
+                                                }
                                         )
                                     }
                                 }

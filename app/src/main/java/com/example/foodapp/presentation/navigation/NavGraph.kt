@@ -35,7 +35,12 @@ fun NavGraph(
         }
 
         composable("favorites"){
-            FavoritesScreen()
+            FavoritesScreen(
+                modifier = modifier,
+                onRecipeClick = { recipeId ->
+                    navController.navigate("detail/$recipeId")
+                }
+            )
         }
     }
 }

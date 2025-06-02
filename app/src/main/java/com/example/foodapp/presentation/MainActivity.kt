@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -46,11 +48,23 @@ class MainActivity : ComponentActivity() {
                     containerColor = Color.White,
                     topBar = {
                         TopAppBar(
-                            title = { Text("Food App") },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = greenPrimary,
-                                titleContentColor = MaterialTheme.colorScheme.onPrimary
-                            ),
+                            title = {
+                                Text(
+                                    text = "Food App",
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            },
+                            navigationIcon = {
+                                if (currentRoute != "home") {
+                                    IconButton(onClick = { navController.popBackStack() }) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Back",
+                                            tint = MaterialTheme.colorScheme.onPrimary
+                                        )
+                                    }
+                                }
+                            },
                             actions = {
                                 if (currentRoute != "favorites") {
                                     Box(
@@ -58,7 +72,11 @@ class MainActivity : ComponentActivity() {
                                             .padding(end = 8.dp)
                                             .size(40.dp)
                                             .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.30f))
+                                            .background(
+                                                MaterialTheme.colorScheme.onPrimary.copy(
+                                                    alpha = 0.30f
+                                                )
+                                            )
                                             .clickable { navController.navigate("favorites") },
                                         contentAlignment = Alignment.Center
                                     ) {
@@ -69,19 +87,25 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
                                 }
-                            }
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = greenPrimary,
+                                titleContentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        )
+                    },
+                    content = { padding ->
+                        NavGraph(
+                            navController = navController,
+                            modifier = Modifier.padding(padding)
                         )
                     }
-                ) { padding ->
-                    NavGraph(
-                        navController = navController,
-                        modifier = Modifier.padding(padding)
-                    )
-                }
+                )
             }
         }
     }
 }
+
 
 
 

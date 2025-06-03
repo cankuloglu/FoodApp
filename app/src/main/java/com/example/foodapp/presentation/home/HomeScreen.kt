@@ -31,9 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -58,7 +55,7 @@ fun HomeScreen(
     favoritesViewModel: FavoritesViewModel = hiltViewModel(),
     onRecipeClick: (Int) -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
+    val searchQuery by homeViewModel.searchQuery.collectAsState()
 
     val uiState by homeViewModel.recipesState.collectAsState()
 
@@ -71,10 +68,7 @@ fun HomeScreen(
     ) {
         OutlinedTextField(
             value = searchQuery,
-            onValueChange = {
-                searchQuery = it
-                homeViewModel.searchRecipes(it)
-            },
+            onValueChange = { homeViewModel.updateSearchQuery(it)},
             label = { Text(text = stringResource(R.string.search_bar_text))},
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,

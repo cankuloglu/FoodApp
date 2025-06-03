@@ -24,9 +24,17 @@ class HomeViewModel @Inject constructor(
     private val _recipesState = MutableStateFlow<ResponseState<List<Recipe>>>(ResponseState.Loading())
     val recipesState: StateFlow<ResponseState<List<Recipe>>> = _recipesState.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
 
     init {
         loadRandomRecipes()
+    }
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+        searchRecipes(query)
     }
 
     private fun loadRandomRecipes() {

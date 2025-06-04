@@ -1,6 +1,6 @@
 package com.example.foodapp.data.dto
 
-import com.example.foodapp.domain.model.RecipeDetail
+import com.example.foodapp.domain.model.RecipeDetailDomainModel
 
 data class RecipeDetailResponseDto(
     val id: Int,
@@ -25,8 +25,8 @@ data class StepDto(
     val step: String
 )
 
-fun RecipeDetailResponseDto.toDomain(): RecipeDetail {
-    return RecipeDetail(
+fun RecipeDetailResponseDto.toDomain(): RecipeDetailDomainModel {
+    return RecipeDetailDomainModel(
         id = this.id,
         title = this.title,
         image = this.image,

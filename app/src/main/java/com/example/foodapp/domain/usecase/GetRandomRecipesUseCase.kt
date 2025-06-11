@@ -1,6 +1,6 @@
 package com.example.foodapp.domain.usecase
 
-import com.example.foodapp.domain.model.Recipe
+import com.example.foodapp.domain.model.RecipeDomainModel
 import com.example.foodapp.domain.repository.RecipeRepository
 import com.example.foodapp.domain.util.ResponseState
 import kotlinx.coroutines.flow.Flow
@@ -9,8 +9,9 @@ import javax.inject.Inject
 
 class GetRandomRecipesUseCase @Inject constructor(
     private val repository: RecipeRepository
-) {
-    fun execute(): Flow<ResponseState<List<Recipe>>> = flow {
+): BaseUseCase<Unit, ResponseState<List<RecipeDomainModel>>>(){
+
+    override fun invokeStream(param: Unit): Flow<ResponseState<List<RecipeDomainModel>>> = flow {
         emit(ResponseState.Loading())
         try {
             val recipes = repository.getRandomRecipes()

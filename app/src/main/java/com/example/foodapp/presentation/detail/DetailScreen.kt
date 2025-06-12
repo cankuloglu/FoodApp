@@ -1,5 +1,11 @@
 package com.example.foodapp.presentation.detail
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,10 +21,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,35 +37,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.cankuloglu.myapplication.R
 import com.example.foodapp.domain.util.HtmlUtils
 import com.example.foodapp.domain.util.ResponseState
-import com.example.foodapp.presentation.favorites.FavoritesViewModel
+import com.example.foodapp.toRecipeDomainModel
 
 @Composable
 fun DetailScreen(
     recipeId: Int,
     modifier: Modifier = Modifier,
     detailViewModel: DetailViewModel = hiltViewModel(),
-    favoritesViewModel: FavoritesViewModel = hiltViewModel()
+    onNavigateFavoritesClicked: () -> Unit
 ) {
     LaunchedEffect(recipeId) {
         detailViewModel.loadRecipeDetail(recipeId)
     }
 
-    val favorites by favoritesViewModel.favoriteRecipes.collectAsState()
-
-    val detailUiState by detailViewModel.recipeDetailState.collectAsState()
+    val detailUiState by detailViewModel.recipeDetailDomainModelState.collectAsState()
 
     Box(
         modifier = modifier
@@ -79,7 +93,7 @@ fun DetailScreen(
             is ResponseState.Success -> {
                 val recipeDetail = (detailUiState as ResponseState.Success).data
 
-                val isFavorite = favorites.any { it.id == recipeDetail.id }
+
 
                 Card(
                     modifier = Modifier
@@ -122,7 +136,7 @@ fun DetailScreen(
                                         modifier = Modifier.weight(1f)
                                     )
 
-                                    if (isFavorite) {
+                                    if (recipeDetail.isFavorite) {
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Icon(
                                             imageVector = Icons.Default.Favorite,
@@ -232,11 +246,134 @@ fun DetailScreen(
                                         modifier = Modifier.padding(bottom = 8.dp)
                                     )
                                 }
+
                             }
+
                         }
                     }
+
                 }
+                ExpandingFABWithLabels(
+                    onFavoriteClick = {
+                        onNavigateFavoritesClicked()
+                    },
+                    onAddClick = {
+                        val recipe = recipeDetail.toRecipeDomainModel()
+                        detailViewModel.toggleFavoriteState(recipe)
+                    },
+                    isFavorite = recipeDetail.toRecipeDomainModel().isFavorite
+                )
             }
         }
     }
 }
+
+@Composable
+fun ExpandingFABWithLabels(
+    onFavoriteClick: () -> Unit,
+    onAddClick: () -> Unit,
+    isFavorite: Boolean
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            // Mini FAB - Favorite
+            AnimatedVisibility(
+                visible = expanded,
+                enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Go to Favorites",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                    FloatingActionButton(
+                        onClick = {
+                            expanded = false
+                            onFavoriteClick()
+                        },
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Favorite",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+
+            // Mini FAB - Add
+            AnimatedVisibility(
+                visible = expanded,
+                enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                            text = if(isFavorite) "Delete" else "Add",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    )
+                    FloatingActionButton(
+                        onClick = {
+                            expanded = false
+                            onAddClick()
+                        },
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = if(isFavorite) Icons.Default.Delete else Icons.Default.Add,
+                            contentDescription = stringResource(R.string.add_or_delete),
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+
+            // Ana FAB
+            FloatingActionButton(
+                onClick = { expanded = !expanded },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = if (expanded) Icons.Default.Close else Icons.Default.Menu,
+                    contentDescription = "Menu",
+                    tint = Color.White
+                )
+            }
+        }
+    }
+}
+

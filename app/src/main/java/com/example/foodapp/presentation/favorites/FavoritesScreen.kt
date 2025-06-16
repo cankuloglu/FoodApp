@@ -36,14 +36,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.cankuloglu.myapplication.R
 
 @Composable
 fun FavoritesScreen(
     modifier: Modifier = Modifier,
-    favoritesViewModel: FavoritesViewModel = hiltViewModel(),
+    favoritesViewModel: FavoritesViewModel,
     onRecipeClick: (Int) -> Unit
 ) {
     val favorites by favoritesViewModel.favoriteRecipes.collectAsState(initial = emptyList())

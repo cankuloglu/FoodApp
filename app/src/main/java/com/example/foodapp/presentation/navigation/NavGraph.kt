@@ -7,12 +7,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.foodapp.presentation.detail.DetailScreen
 import com.example.foodapp.presentation.favorites.FavoritesScreen
+import com.example.foodapp.presentation.favorites.FavoritesViewModel
 import com.example.foodapp.presentation.home.HomeScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    modifier: Modifier
+    modifier: Modifier,
+    favoritesViewModel: FavoritesViewModel
 ){
     NavHost(
         navController = navController,
@@ -30,7 +32,13 @@ fun NavGraph(
         composable("detail/{recipeId}") { backStackEntry ->
             val recipeId = backStackEntry.arguments?.getString("recipeId")?.toIntOrNull()
             recipeId?.let {
-                DetailScreen(recipeId = it, modifier = modifier)
+                DetailScreen(
+                    recipeId = it,
+                    modifier = modifier,
+                    onNavigateFavoritesClicked = {
+                        navController.navigate("favorites")
+                    }
+                )
             }
         }
 
@@ -39,7 +47,8 @@ fun NavGraph(
                 modifier = modifier,
                 onRecipeClick = { recipeId ->
                     navController.navigate("detail/$recipeId")
-                }
+                },
+                favoritesViewModel = favoritesViewModel
             )
         }
     }

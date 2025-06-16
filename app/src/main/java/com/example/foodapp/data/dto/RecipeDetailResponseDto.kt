@@ -1,6 +1,7 @@
 package com.example.foodapp.data.dto
 
 import com.example.foodapp.domain.model.RecipeDetailDomainModel
+import java.util.Date
 
 data class RecipeDetailResponseDto(
     val id: Int,
@@ -8,7 +9,8 @@ data class RecipeDetailResponseDto(
     val image: String,
     val summary: String,
     val extendedIngredients: List<IngredientDto>,
-    val analyzedInstructions: List<InstructionDto>
+    val analyzedInstructions: List<InstructionDto>,
+    val timestamp: Date?
 )
 
 data class IngredientDto(
@@ -25,16 +27,22 @@ data class StepDto(
     val step: String
 )
 
-fun RecipeDetailResponseDto.toDomain(): RecipeDetailDomainModel {
+fun RecipeDetailResponseDto.toDomain(
+    isFavorite: Boolean,
+    timestamp: Date? = null
+): RecipeDetailDomainModel {
     return RecipeDetailDomainModel(
         id = this.id,
         title = this.title,
         image = this.image,
         summary = this.summary,
         extendedIngredients = this.extendedIngredients,
-        analyzedInstructions = this.analyzedInstructions
+        analyzedInstructions = this.analyzedInstructions,
+        isFavorite = isFavorite,
+        timestamp = timestamp ?: this.timestamp ?: Date()
     )
 }
+
 
 
 

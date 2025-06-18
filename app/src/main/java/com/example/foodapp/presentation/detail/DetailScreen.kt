@@ -1,5 +1,6 @@
 package com.example.foodapp.presentation.detail
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -29,10 +31,15 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -51,18 +58,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.cankuloglu.myapplication.R
 import com.example.foodapp.domain.util.HtmlUtils
 import com.example.foodapp.domain.util.ResponseState
 import com.example.foodapp.toRecipeDomainModel
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun DetailScreen(
     recipeId: Int,
     modifier: Modifier = Modifier,
     detailViewModel: DetailViewModel = hiltViewModel(),
-    onNavigateFavoritesClicked: () -> Unit
+    onNavigateFavoritesClicked: () -> Unit,
+    navController: NavController
 ) {
     LaunchedEffect(recipeId) {
         detailViewModel.loadRecipeDetail(recipeId)
@@ -70,199 +81,222 @@ fun DetailScreen(
 
     val detailUiState by detailViewModel.recipeDetailDomainModelState.collectAsState()
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        when(detailUiState){
-            is ResponseState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
 
-            is ResponseState.Error -> {
-                val errorMessage = (detailUiState as ResponseState.Error).message
-                Text(
-                    text = errorMessage,
-                    color = Color.Red,
-                    modifier = Modifier.align(Alignment.Center),
-                    textAlign = TextAlign.Center
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Food App") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
+            )
+        }
+    ) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = 66.dp)
+        ) {
+            when (detailUiState) {
+                is ResponseState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
 
-            }
-            is ResponseState.Success -> {
-                val recipeDetail = (detailUiState as ResponseState.Success).data
+                is ResponseState.Error -> {
+                    val errorMessage = (detailUiState as ResponseState.Error).message
+                    Text(
+                        text = errorMessage,
+                        color = Color.Red,
+                        modifier = Modifier.align(Alignment.Center),
+                        textAlign = TextAlign.Center
+                    )
+
+                }
+
+                is ResponseState.Success -> {
+                    val recipeDetail = (detailUiState as ResponseState.Success).data
 
 
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    shape = RoundedCornerShape(24.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF))
-                ) {
-                    Column(
+                    Card(
                         modifier = Modifier
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp)
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        shape = RoundedCornerShape(24.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF))
                     ) {
-
-                        Card(
-                            shape = RoundedCornerShape(16.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
+                        Column(
+                            modifier = Modifier
+                                .verticalScroll(rememberScrollState())
+                                .padding(16.dp)
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp)
+
+                            Card(
+                                shape = RoundedCornerShape(16.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
                             ) {
-                                Row(
+                                Column(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 16.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
+                                        .padding(16.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 16.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = recipeDetail.title,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            textAlign = TextAlign.Center,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis,
+                                            modifier = Modifier.weight(1f)
+                                        )
+
+                                        if (recipeDetail.isFavorite) {
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Icon(
+                                                imageVector = Icons.Default.Favorite,
+                                                contentDescription = "Favorite",
+                                                tint = Color.Red,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+                                    }
+
+
+                                    AsyncImage(
+                                        model = recipeDetail.image,
+                                        contentDescription = recipeDetail.image,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(200.dp)
+                                            .clip(RoundedCornerShape(16.dp))
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Card(
+                                shape = RoundedCornerShape(16.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
+
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
                                 ) {
                                     Text(
-                                        text = recipeDetail.title,
+                                        text = "Summary",
                                         style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        textAlign = TextAlign.Center,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.weight(1f)
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier.padding(bottom = 8.dp)
                                     )
 
-                                    if (recipeDetail.isFavorite) {
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Icon(
-                                            imageVector = Icons.Default.Favorite,
-                                            contentDescription = "Favorite",
-                                            tint = Color.Red,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                }
-
-
-                                AsyncImage(
-                                    model = recipeDetail.image,
-                                    contentDescription = recipeDetail.image,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp)
-                                        .clip(RoundedCornerShape(16.dp))
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Card (
-                            shape = RoundedCornerShape(16.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
-
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                Text(
-                                    text = "Summary",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-
-                                Text(
-                                    text = HtmlUtils.fromHtmlToString(recipeDetail.summary),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier.padding(bottom = 4.dp)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Card(
-                            shape = RoundedCornerShape(16.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = 	Color(0xFFFFFDE7))
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                Text(
-                                    text = "Ingredients",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-
-                                recipeDetail.extendedIngredients.forEach { ingredient ->
                                     Text(
-                                        text = "• ${ingredient.original}",
+                                        text = HtmlUtils.fromHtmlToString(recipeDetail.summary),
                                         style = MaterialTheme.typography.bodyMedium,
                                         modifier = Modifier.padding(bottom = 4.dp)
                                     )
                                 }
                             }
-                        }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        Card(
-                            shape = RoundedCornerShape(16.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFFFCE4EC))
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp)
+                            Card(
+                                shape = RoundedCornerShape(16.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFDE7))
                             ) {
-                                Text(
-                                    text = "Steps",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier.padding(bottom = 8.dp)
-                                )
-
-                                recipeDetail.analyzedInstructions.firstOrNull()?.steps?.forEach { step ->
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
                                     Text(
-                                        text = "Step ${step.number}:",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(top = 8.dp)
-                                    )
-                                    Text(
-                                        text = step.step,
-                                        style = MaterialTheme.typography.bodyMedium,
+                                        text = "Ingredients",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold,
                                         modifier = Modifier.padding(bottom = 8.dp)
                                     )
+
+                                    recipeDetail.extendedIngredients.forEach { ingredient ->
+                                        Text(
+                                            text = "• ${ingredient.original}",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            modifier = Modifier.padding(bottom = 4.dp)
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Card(
+                                shape = RoundedCornerShape(16.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFFFCE4EC))
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
+                                    Text(
+                                        text = "Steps",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier.padding(bottom = 8.dp)
+                                    )
+
+                                    recipeDetail.analyzedInstructions.firstOrNull()?.steps?.forEach { step ->
+                                        Text(
+                                            text = "Step ${step.number}:",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(top = 8.dp)
+                                        )
+                                        Text(
+                                            text = step.step,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            modifier = Modifier.padding(bottom = 8.dp)
+                                        )
+                                    }
+
                                 }
 
                             }
-
                         }
-                    }
 
+                    }
+                    ExpandingFABWithLabels(
+                        onFavoriteClick = {
+                            onNavigateFavoritesClicked()
+                        },
+                        onAddClick = {
+                            val recipe = recipeDetail.toRecipeDomainModel()
+                            detailViewModel.toggleFavoriteState(recipe)
+                        },
+                        isFavorite = recipeDetail.toRecipeDomainModel().isFavorite
+                    )
                 }
-                ExpandingFABWithLabels(
-                    onFavoriteClick = {
-                        onNavigateFavoritesClicked()
-                    },
-                    onAddClick = {
-                        val recipe = recipeDetail.toRecipeDomainModel()
-                        detailViewModel.toggleFavoriteState(recipe)
-                    },
-                    isFavorite = recipeDetail.toRecipeDomainModel().isFavorite
-                )
             }
         }
     }
@@ -286,7 +320,6 @@ fun ExpandingFABWithLabels(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            // Mini FAB - Favorite
             AnimatedVisibility(
                 visible = expanded,
                 enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
@@ -323,8 +356,6 @@ fun ExpandingFABWithLabels(
                     }
                 }
             }
-
-            // Mini FAB - Add
             AnimatedVisibility(
                 visible = expanded,
                 enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
@@ -362,7 +393,7 @@ fun ExpandingFABWithLabels(
                 }
             }
 
-            // Ana FAB
+
             FloatingActionButton(
                 onClick = { expanded = !expanded },
                 containerColor = MaterialTheme.colorScheme.primary

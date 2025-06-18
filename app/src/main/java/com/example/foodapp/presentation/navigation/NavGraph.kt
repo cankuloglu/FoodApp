@@ -7,14 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.foodapp.presentation.detail.DetailScreen
 import com.example.foodapp.presentation.favorites.FavoritesScreen
-import com.example.foodapp.presentation.favorites.FavoritesViewModel
 import com.example.foodapp.presentation.home.HomeScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     modifier: Modifier,
-    favoritesViewModel: FavoritesViewModel
 ){
     NavHost(
         navController = navController,
@@ -37,7 +35,8 @@ fun NavGraph(
                     modifier = modifier,
                     onNavigateFavoritesClicked = {
                         navController.navigate("favorites")
-                    }
+                    },
+                    navController = navController
                 )
             }
         }
@@ -48,7 +47,7 @@ fun NavGraph(
                 onRecipeClick = { recipeId ->
                     navController.navigate("detail/$recipeId")
                 },
-                favoritesViewModel = favoritesViewModel
+                navController = navController
             )
         }
     }

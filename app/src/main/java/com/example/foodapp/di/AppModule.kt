@@ -2,6 +2,7 @@ package com.example.foodapp.di
 import android.content.Context
 import androidx.room.Room
 import com.example.foodapp.RecipeDao
+import com.example.foodapp.data.MIGRATION_2_3
 import com.example.foodapp.data.RecipeDatabase
 import com.example.foodapp.domain.util.Constants
 import com.example.foodapp.data.repository.RecipeRepositoryImpl
@@ -46,7 +47,8 @@ object AppModule {
             context,
             RecipeDatabase::class.java,
             "recipe_database"
-        ).build()
+        ).addMigrations(MIGRATION_2_3)
+            .build()
 
     @Provides
     fun provideRecipeDao(database: RecipeDatabase): RecipeDao = database.recipeDao()

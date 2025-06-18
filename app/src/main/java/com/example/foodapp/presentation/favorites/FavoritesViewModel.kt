@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,6 +40,16 @@ class FavoritesViewModel @Inject constructor(
     }
 
     private val _sortType = MutableStateFlow(SortType.DEFAULT)
+
+    val sortTypeLabel: StateFlow<String> = _sortType.map { sortType ->
+        when(sortType) {
+            SortType.DEFAULT -> "Random"
+            SortType.NAME_ASC -> "Name Ascending"
+            SortType.NAME_DESC -> "Name Descending"
+            SortType.DATE_ASC -> "Date Ascending"
+            SortType.DATE_DESC -> "Date Descending"
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, "Default")
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val favoriteRecipes: StateFlow<List<RecipeDomainModel>> = _sortType

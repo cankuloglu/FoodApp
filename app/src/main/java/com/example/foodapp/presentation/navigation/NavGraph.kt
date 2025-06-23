@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.example.foodapp.presentation.detail.DetailScreen
 import com.example.foodapp.presentation.favorites.FavoritesScreen
 import com.example.foodapp.presentation.home.HomeScreen
+import com.example.foodapp.presentation.ingredient.SearchByIngredientScreen
 
 @Composable
 fun NavGraph(
@@ -49,6 +50,10 @@ fun NavGraph(
                 },
                 navController = navController
             )
+        }
+
+        composable("search_by_ingredients"){
+            SearchByIngredientScreen()
         }
     }
 }

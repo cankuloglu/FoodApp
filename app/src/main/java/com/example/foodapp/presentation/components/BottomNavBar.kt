@@ -3,6 +3,7 @@ package com.example.foodapp.presentation.components
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -17,7 +18,8 @@ import com.example.foodapp.presentation.navigation.Screen
 fun BottomNavigationBar(navController: NavHostController) {
     val items = listOf(
         Screen.Home,
-        Screen.Favorites
+        Screen.Favorites,
+        Screen.SearchByIngredients
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -31,6 +33,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                         imageVector = when (screen) {
                             is Screen.Home -> Icons.Default.Home
                             is Screen.Favorites -> Icons.Default.Favorite
+                            is Screen.SearchByIngredients -> Icons.Default.Search
                         },
                         contentDescription = screen.title
                     )

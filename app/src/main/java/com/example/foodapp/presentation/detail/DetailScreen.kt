@@ -85,12 +85,12 @@ fun DetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Food App") },
+                title = { Text(text = stringResource(R.string.food_app)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -173,7 +173,7 @@ fun DetailScreen(
                                             Spacer(modifier = Modifier.width(8.dp))
                                             Icon(
                                                 imageVector = Icons.Default.Favorite,
-                                                contentDescription = "Favorite",
+                                                contentDescription = stringResource(R.string.favorite),
                                                 tint = Color.Red,
                                                 modifier = Modifier.size(20.dp)
                                             )
@@ -206,7 +206,7 @@ fun DetailScreen(
                                     modifier = Modifier.padding(16.dp)
                                 ) {
                                     Text(
-                                        text = "Summary",
+                                        text = stringResource(R.string.summary),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.SemiBold,
                                         modifier = Modifier.padding(bottom = 8.dp)
@@ -232,7 +232,7 @@ fun DetailScreen(
                                     modifier = Modifier.padding(16.dp)
                                 ) {
                                     Text(
-                                        text = "Ingredients",
+                                        text = stringResource(R.string.ingredients),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.SemiBold,
                                         modifier = Modifier.padding(bottom = 8.dp)
@@ -260,7 +260,7 @@ fun DetailScreen(
                                     modifier = Modifier.padding(16.dp)
                                 ) {
                                     Text(
-                                        text = "Steps",
+                                        text = stringResource(R.string.steps),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.SemiBold,
                                         modifier = Modifier.padding(bottom = 8.dp)
@@ -268,7 +268,7 @@ fun DetailScreen(
 
                                     recipeDetail.analyzedInstructions.firstOrNull()?.steps?.forEach { step ->
                                         Text(
-                                            text = "Step ${step.number}:",
+                                            text = stringResource(R.string.step, step.number),
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
                                             modifier = Modifier.padding(top = 8.dp)
@@ -330,7 +330,7 @@ fun ExpandingFABWithLabels(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Go to Favorites",
+                        text = stringResource(R.string.go_to_favorites),
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
@@ -350,7 +350,7 @@ fun ExpandingFABWithLabels(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
-                            contentDescription = "Favorite",
+                            contentDescription = stringResource(R.string.favorite),
                             tint = Color.White
                         )
                     }
@@ -366,7 +366,7 @@ fun ExpandingFABWithLabels(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                            text = if(isFavorite) "Delete" else "Add",
+                            text = if(isFavorite) stringResource(R.string.delete) else stringResource(R.string.add),
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
@@ -400,7 +400,7 @@ fun ExpandingFABWithLabels(
             ) {
                 Icon(
                     imageVector = if (expanded) Icons.Default.Close else Icons.Default.Menu,
-                    contentDescription = "Menu",
+                    contentDescription = stringResource(R.string.menu),
                     tint = Color.White
                 )
             }

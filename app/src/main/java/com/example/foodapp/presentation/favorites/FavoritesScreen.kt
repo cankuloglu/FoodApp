@@ -74,12 +74,12 @@ fun FavoritesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Food App") },
+                title = { Text(stringResource(R.string.food_app) ) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -106,28 +106,28 @@ fun FavoritesScreen(
                                 onDismissRequest = { menuExpanded = false }
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Sort by ascending name") },
+                                    text = { Text(stringResource(R.string.sort_by_ascending_name)) },
                                     onClick = {
                                         menuExpanded = false
                                         favoritesViewModel.setSortType(FavoritesViewModel.SortType.NAME_ASC)
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Sort by descending name") },
+                                    text = { Text(stringResource(R.string.sort_by_descending_name)) },
                                     onClick = {
                                         menuExpanded = false
                                         favoritesViewModel.setSortType(FavoritesViewModel.SortType.NAME_DESC)
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Sort by ascending date") },
+                                    text = { Text(stringResource(R.string.sort_by_ascending_date)) },
                                     onClick = {
                                         menuExpanded = false
                                         favoritesViewModel.setSortType(FavoritesViewModel.SortType.DATE_ASC)
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Sort by descending date") },
+                                    text = { Text(stringResource(R.string.sort_by_descending_date)) },
                                     onClick = {
                                         menuExpanded = false
                                         favoritesViewModel.setSortType(FavoritesViewModel.SortType.DATE_DESC)

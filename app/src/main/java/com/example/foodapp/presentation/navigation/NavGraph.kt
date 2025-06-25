@@ -53,7 +53,11 @@ fun NavGraph(
         }
 
         composable("search_by_ingredients"){
-            SearchByIngredientScreen()
+            SearchByIngredientScreen(
+                onRecipeClick = { recipeId ->
+                    navController.navigate("detail/$recipeId")
+                }
+            )
         }
     }
 }

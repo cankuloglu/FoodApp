@@ -212,7 +212,6 @@ fun HomeScreen(
                                     .fillMaxSize()
                             ) {
                                 items(recipes) { recipe ->
-
                                     Card(
                                         modifier = Modifier
                                             .padding(8.dp)

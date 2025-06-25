@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     kotlin("kapt")
+    alias(libs.plugins.google.gms.google.services)
 }
 
 hilt {
@@ -20,9 +21,7 @@ val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localProperties.load(FileInputStream(localPropertiesFile))
 }
-
-
-
+val apiKey = localProperties["API_KEY"] as String
 
 android {
     namespace = "com.cankuloglu.myapplication"
@@ -36,7 +35,7 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "API_KEY", "\"${property("API_KEY")}\"")
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
 
 
     }
@@ -70,11 +69,11 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom)) // BOM handles versioning
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.auth)
 
     // Testing
     testImplementation(libs.junit)
@@ -86,17 +85,17 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Retrofit dependencies
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
     // Coil for image loading
-    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation(libs.coil.compose)
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation(libs.kotlinx.coroutines.android)
 
     //Compose Navigation
-    implementation ("androidx.navigation:navigation-compose:2.7.7")
+    implementation (libs.androidx.navigation.compose)
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
@@ -107,5 +106,13 @@ dependencies {
 
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
+    implementation (libs.material3)
+    implementation (libs.androidx.foundation)
+
+    implementation (libs.logging.interceptor)
+
+
+
+
 
 }

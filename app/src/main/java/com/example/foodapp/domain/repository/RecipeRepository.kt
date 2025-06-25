@@ -1,5 +1,6 @@
 package com.example.foodapp.domain.repository
 
+import com.example.foodapp.domain.model.IngredientDomainModel
 import com.example.foodapp.domain.model.RecipeDomainModel
 import com.example.foodapp.domain.model.RecipeDetailDomainModel
 import kotlinx.coroutines.flow.Flow
@@ -16,4 +17,6 @@ interface RecipeRepository {
     fun sortByNameDesc(): Flow<List<RecipeDomainModel>>
     fun sortByDateAsc(): Flow<List<RecipeDomainModel>>
     fun sortByDateDesc(): Flow<List<RecipeDomainModel>>
+    suspend fun searchIngredient(query: String): List<IngredientDomainModel>
+    suspend fun getRecipesByIngredients(ingredients: List<String>): List<RecipeDomainModel>
 }

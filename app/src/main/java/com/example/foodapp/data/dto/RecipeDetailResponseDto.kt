@@ -15,7 +15,8 @@ data class RecipeDetailResponseDto(
 
 data class IngredientDto(
     val original: String,
-    val image: String
+    val image: String,
+    val id: Int
 )
 
 data class InstructionDto(

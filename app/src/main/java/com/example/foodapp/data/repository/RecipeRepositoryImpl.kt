@@ -1,8 +1,10 @@
 package com.example.foodapp.data.repository
 
+import android.util.Log
 import com.example.foodapp.RecipeDao
 import com.example.foodapp.data.remote.SpoonacularApiService
 import com.example.foodapp.data.dto.toDomain
+import com.example.foodapp.domain.model.IngredientDomainModel
 import com.example.foodapp.domain.model.RecipeDomainModel
 import com.example.foodapp.domain.model.RecipeDetailDomainModel
 import com.example.foodapp.domain.repository.RecipeRepository
@@ -77,6 +79,43 @@ class RecipeRepositoryImpl@Inject constructor(
     override fun sortByDateDesc(): Flow<List<RecipeDomainModel>> {
         return recipeDao.getFavoritesSortedByDateDesc()
             .map { list -> list.map { it.toDomain() } }
+    }
+
+    override suspend fun searchIngredient(query: String): List<IngredientDomainModel> {
+        return try {
+            val response = api.autocompleteIngredients(query,10, apiKey)
+            response.forEach {
+                Log.d("API DTO", "id: ${it.id}, name: ${it.name}")
+            }
+            response.map { dto ->
+                dto.toDomain()
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getRecipesByIngredients(ingredients: List<String>): List<RecipeDomainModel> {
+        return try {
+            if (ingredients.isEmpty()) return emptyList()
+
+            val ingredientsQuery = ingredients.joinToString(",")
+            val response = api.getRecipesByIngredients(
+                ingredients = ingredientsQuery,
+                number = 10,
+                ranking = 1,
+                ignorePantry = true,
+                apiKey = apiKey
+            )
+
+            response.map { dto ->
+                val isFavorite = recipeDao.isFavorite(dto.id)
+                dto.toDomain(isFavorite)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 
 

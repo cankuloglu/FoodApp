@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class DeleteFavoriteRecipeUseCase @Inject constructor(
     private val repository: RecipeRepository
-) : BaseUseCase<RecipeDomainModel, Unit>() {
+) : BaseUseCase<RecipeDomainModel, Unit> {
 
     override suspend fun invoke(param: RecipeDomainModel) {
         repository.deleteRecipes(param)

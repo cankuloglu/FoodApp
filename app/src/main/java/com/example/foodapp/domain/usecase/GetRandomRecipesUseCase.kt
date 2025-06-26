@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class GetRandomRecipesUseCase @Inject constructor(
     private val repository: RecipeRepository
-): BaseUseCase<Unit, ResponseState<List<RecipeDomainModel>>>(){
+) : StreamBaseUseCase<Unit, ResponseState<List<RecipeDomainModel>>> {
 
     override fun invokeStream(param: Unit): Flow<ResponseState<List<RecipeDomainModel>>> = flow {
         emit(ResponseState.Loading())

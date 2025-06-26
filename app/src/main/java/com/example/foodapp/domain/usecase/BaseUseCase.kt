@@ -1,17 +1,7 @@
 package com.example.foodapp.domain.usecase
 
-import kotlinx.coroutines.flow.Flow
+interface BaseUseCase<in Param, out Result> : UseCaseInterface {
 
-abstract class BaseUseCase<in Param, out Result> {
-
-    open suspend operator fun invoke(param: Param): Result {
-        throw NotImplementedError("Override suspend invoke if needed.")
-    }
-
-    open fun invokeStream(param: Param): Flow<Result> {
-        throw NotImplementedError("Override invokeStream if needed.")
-    }
-
-
+    suspend operator fun invoke(param: Param): Result
 
 }

@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class GetRecipeByIngredientUseCase @Inject constructor(
     private val repository: RecipeRepository
-) : BaseUseCase<List<String>, List<RecipeDomainModel>>() {
+) : StreamBaseUseCase<List<String>, List<RecipeDomainModel>> {
 
     override fun invokeStream(param: List<String>): Flow<List<RecipeDomainModel>> = flow {
         val result = repository.getRecipesByIngredients(param)

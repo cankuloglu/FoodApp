@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class GetFavoritesSortedByDateAscUseCase @Inject constructor(
     private val repository: RecipeRepository
-) : BaseUseCase<Unit, List<RecipeDomainModel>>() {
+) : StreamBaseUseCase<Unit, List<RecipeDomainModel>> {
 
     override fun invokeStream(param: Unit): Flow<List<RecipeDomainModel>> {
         return repository.sortByDateAsc()
